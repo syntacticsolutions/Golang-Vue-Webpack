@@ -5,13 +5,15 @@ import (
 	"database/sql"
 	"go-echo-vue/handlers"
     "github.com/labstack/echo"
-    _ "github.com/mattn/go-sqlite3"
+    "github.com/go-sql-driver/mysql"
+    "fmt"
 )
 
 func main() {
 
-	db := initDB("storage.db")
+	db := initDB()
     migrate(db)
+
     // Create a new instance of Echo
     e := echo.New()
 
@@ -24,8 +26,10 @@ func main() {
     e.Logger.Fatal(e.Start(":1323"))
 }
 
-func initDB(filepath string) *sql.DB {
-    db, err := sql.Open("sqlite3", filepath)
+func initDB() *sql.DB { // add support for null
+
+    db, err := sql.Open("mysql", "root:root@tcp(localhost:3306)/golang_vue")
+
 
     // Here we check for any db errors then exit
     if err != nil {
@@ -37,20 +41,27 @@ func initDB(filepath string) *sql.DB {
     if db == nil {
         panic("db nil")
     }
+
     return db
 }
 
 func migrate(db *sql.DB) {
-    sql := `
+    stmt, err := db.Prepare(`
     CREATE TABLE IF NOT EXISTS tasks(
-        id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-        name VARCHAR NOT NULL
+        id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+        name VARCHAR(25) NOT NULL
     );
-    `
-
-    _, err := db.Exec(sql)
-    // Exit if something goes wrong with our SQL statement above
+    `)
+    
     if err != nil {
         panic(err)
+    }
+
+    res, err := stmt.Exec()
+    
+    if err != nil {
+        panic(err)
+    } else {
+    fmt.Println(res)
     }
 }
