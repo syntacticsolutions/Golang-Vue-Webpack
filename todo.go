@@ -9,9 +9,10 @@ import (
     "github.com/dgrijalva/jwt-go"
     _ "github.com/go-sql-driver/mysql"
     "time"
-    "fmt"
+    // "fmt"
     "io/ioutil"
     "strings"
+    "encoding/json"
 )
 
 func main() {
@@ -95,17 +96,30 @@ type jwtCustomClaims struct {
 
 func login(db *sql.DB) echo.HandlerFunc {
     return func(c echo.Context) error {
-        email := c.FormValue("email")
-        password := c.FormValue("password")
+        // email := c.FormValue("email")
+        // password := c.FormValue("password")
 
+        json_map := make(map[string]interface{})
+        err := json.NewDecoder(c.Request().Body).Decode(&json_map)
+        
+        if err != nil {
+
+            return err
+        }
+            //json_map has the JSON Payload decoded into a map
+        email := json_map["email"]
+        password := json_map["password"]
+        
+
+        // return c.String(http.StatusOK, email)
 
         var uid int
         var useremail string
         var userpass string
         //TODO BCrypt
 
-        err := db.QueryRow(`
-            SELECT * FROM users WHERE email = ? AND password = ?
+        err = db.QueryRow(`
+            SELECT id, email, password FROM users WHERE email = ? AND password = ?
             `, email, password).Scan(&uid, &useremail, &userpass)
 
         checkErr(err)
