@@ -8,12 +8,18 @@ import (
     "github.com/labstack/echo/middleware"
     "github.com/dgrijalva/jwt-go"
     _ "github.com/go-sql-driver/mysql"
-    "time"
+    // "time"
     // "fmt"
     "io/ioutil"
     "strings"
-    "encoding/json"
+    // "encoding/json"
 )
+
+type jwtCustomClaims struct {
+    email  string `json:"name"`
+    admin  bool   `json:"admin"`
+    jwt.StandardClaims
+}
 
 func main() {
 
@@ -26,19 +32,22 @@ func main() {
     e.Use(middleware.Recover())
 
     // Login route
-    e.POST("/login", login(db))
+    e.POST("/login", handlers.Login(db))
+    e.POST("/Register", handlers.PostUser(db))
 
     // Restricted group
     r := e.Group("/restricted")
     r.Use(middleware.JWT([]byte("secret")))
     r.GET("", restricted)
 
-    // e.File("/", "dist/index.html")
     e.Static("/", "dist")
-    e.GET("/tasks", handlers.GetTasks(db))
-    e.PUT("/tasks", handlers.PutTask(db))
-    e.DELETE("/tasks/:id", handlers.DeleteTask(db))
-    e.GET("/init", migrate(db))
+    e.GET("/api/users", handlers.GetUsers(db))
+    e.POST("/api/users", handlers.PostUser(db))
+    e.PUT("/api/users/:id", handlers.PutUser(db))
+    e.DELETE("/api/users/:id", handlers.DeleteUser(db))
+    e.GET("/api/projects", handlers.GetProjects(db))
+    // e.POST("/api/projects", handlers.PostProject(db))
+    // e.GET("/init", migrate(db))
     // Start as a web server
     e.Logger.Fatal(e.Start(":1323"))
 }
@@ -85,73 +94,6 @@ func migrate(db *sql.DB) echo.HandlerFunc {
 
     }
 
-}
-
-type jwtCustomClaims struct {
-    email  string `json:"name"`
-    admin bool   `json:"admin"`
-    jwt.StandardClaims
-}
-
-
-func login(db *sql.DB) echo.HandlerFunc {
-    return func(c echo.Context) error {
-        // email := c.FormValue("email")
-        // password := c.FormValue("password")
-
-        json_map := make(map[string]interface{})
-        err := json.NewDecoder(c.Request().Body).Decode(&json_map)
-        
-        if err != nil {
-
-            return err
-        }
-            //json_map has the JSON Payload decoded into a map
-        email := json_map["email"]
-        password := json_map["password"]
-        
-
-        // return c.String(http.StatusOK, email)
-
-        var uid int
-        var useremail string
-        var userpass string
-        //TODO BCrypt
-
-        err = db.QueryRow(`
-            SELECT id, email, password FROM users WHERE email = ? AND password = ?
-            `, email, password).Scan(&uid, &useremail, &userpass)
-
-        checkErr(err)
-
-        if email == useremail && password == userpass {
-
-            // Set custom claims
-            claims := &jwtCustomClaims{
-                "Jon Snow",
-                true,
-                jwt.StandardClaims{
-                    ExpiresAt: time.Now().Add(time.Hour * 72).Unix(),
-                },
-            }
-
-            // Create token with claims
-            token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-
-            // Generate encoded token and send it as response.
-            t, err := token.SignedString([]byte("secret"))
-            if err != nil {
-                return err
-            }
-            return c.JSON(http.StatusOK, echo.Map{
-                "token": t,
-            })
-        }
-
-    return echo.ErrUnauthorized
-
-    }
-    
 }
 
 
