@@ -2,8 +2,7 @@ package models
 
 import (
     "database/sql"
-
-    _ "github.com/go-mysql-driver"
+    // "github.com/go-sql-driver/mysql"
 )
 
 type Task struct {

@@ -1,0 +1,86 @@
+
+CREATE TABLE IF NOT EXISTS marker_types(
+	id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+	marker_type VARCHAR(20) NOT NULL,
+	svg MEDIUMTEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS markers(
+	id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+	type_id INT NOT NULL,
+	lat DEC(6,6) NOT NULL,
+	lng DEC(6,6) NOT NULL,
+	star_date DATETIME,
+	end_date DATETIME,
+	info VARCHAR(30),
+	INDEX mtype_ind (type_id),
+	CONSTRAINT fk_mtype FOREIGN KEY (type_id)
+	REFERENCES marker_types(id)
+	ON DELETE CASCADE
+	ON UPDATE CASCADE
+);
+CREATE TABLE IF NOT EXISTS user_types(
+	id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+	user_type VARCHAR(10) NOT NULL
+);
+CREATE TABLE IF NOT EXISTS users(
+	id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+	user_type_id INT NOT NULL,
+	first_name VARCHAR(30) NOT NULL,
+	last_name VARCHAR(30) NOT NULL,
+	email VARCHAR(50) NOT NULL,
+	password VARCHAR(255) NOT NULL,
+	INDEX utype_ind (user_type_id),
+	CONSTRAINT fk_utype FOREIGN KEY (user_type_id)
+	REFERENCES user_types(id)
+	ON DELETE CASCADE
+	ON UPDATE CASCADE
+);
+CREATE TABLE IF NOT EXISTS contractors(
+	id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+	user_id INT NOT NULL,
+	first_name VARCHAR(30) NOT NULL,
+	last_name VARCHAR(30) NOT NULL,
+	phone INT,
+	cell INT,
+	color VARCHAR(7),
+	INDEX c_user_ind (user_id),
+	CONSTRAINT fk_c_user FOREIGN KEY (user_id)
+	REFERENCES users(id)
+	ON DELETE CASCADE
+	ON UPDATE CASCADE
+);
+CREATE TABLE IF NOT EXISTS project_managers(
+	id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+	user_id INT NOT NULL,
+	first_name VARCHAR(30) NOT NULL,
+	last_name VARCHAR(30) NOT NULL,
+	phone INT,
+	cell INT,
+	INDEX pm_user_ind (user_id),
+	CONSTRAINT fk_pm_user FOREIGN KEY (user_id)
+	REFERENCES users(id)
+	ON DELETE CASCADE
+	ON UPDATE CASCADE
+);
+CREATE TABLE IF NOT EXISTS projects(
+	id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+	primary_marker_id INT NOT NULL,
+	contractor_id INT NOT NULL,
+	pm_id INT NOT NULL,
+	title VARCHAR(20),
+	INDEX p_marker_ind (primary_marker_id),
+	INDEX c_ind (contractor_id),
+	INDEX pm_ind (pm_id),
+	CONSTRAINT fk_p_marker_id FOREIGN KEY (primary_marker_id)
+	REFERENCES markers(id)
+	ON DELETE CASCADE
+	ON UPDATE CASCADE,
+	CONSTRAINT fk_c_id FOREIGN KEY (contractor_id)
+	REFERENCES contractors(id)
+	ON DELETE CASCADE
+	ON UPDATE CASCADE,
+	CONSTRAINT fk_pm_id FOREIGN KEY (pm_id)
+	REFERENCES project_managers(id)
+	ON DELETE CASCADE
+	ON UPDATE CASCADE
+)
