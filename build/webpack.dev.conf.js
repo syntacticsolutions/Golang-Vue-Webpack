@@ -1,78 +1,43 @@
-'use strict'
-const utils = require('./utils')
-const webpack = require('webpack')
-const config = require('../config')
-const merge = require('webpack-merge')
-const baseWebpackConfig = require('./webpack.base.conf')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
-const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin')
-const portfinder = require('portfinder')
+var
+  config = require('../config'),
+  webpack = require('webpack'),
+  merge = require('webpack-merge'),
+  cssUtils = require('./css-utils'),
+  baseWebpackConfig = require('./webpack.base.conf'),
+  HtmlWebpackPlugin = require('html-webpack-plugin'),
+  FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin')
 
-const devWebpackConfig = merge(baseWebpackConfig, {
-  module: {
-    rules: utils.styleLoaders({ sourceMap: config.dev.cssSourceMap, usePostCSS: true })
-  },
-  // cheap-module-eval-source-map is faster for development
-  devtool: config.dev.devtool,
-
-  // these devServer options should be customized in /config/index.js
-  devServer: {
-    clientLogLevel: 'warning',
-    historyApiFallback: true,
-    hot: true,
-    compress: true,
-    host: process.env.HOST || config.dev.host,
-    port: process.env.PORT || config.dev.port,
-    open: config.dev.autoOpenBrowser,
-    overlay: config.dev.errorOverlay ? {
-      warnings: false,
-      errors: true,
-    } : false,
-    publicPath: config.dev.assetsPublicPath,
-    proxy: config.dev.proxyTable,
-    quiet: true, // necessary for FriendlyErrorsPlugin
-    watchOptions: {
-      poll: config.dev.poll,
-    }
-  },
-  plugins: [
-    new webpack.DefinePlugin({
-      'process.env': require('../config/dev.env')
-    }),
-    new webpack.HotModuleReplacementPlugin(),
-    new webpack.NamedModulesPlugin(), // HMR shows correct file names in console on update.
-    new webpack.NoEmitOnErrorsPlugin(),
-    // https://github.com/ampedandwired/html-webpack-plugin
-    new HtmlWebpackPlugin({
-      filename: 'index.html',
-      template: 'index.html',
-      inject: true
-    }),
-  ]
+// add hot-reload related code to entry chunks
+Object.keys(baseWebpackConfig.entry).forEach(function (name) {
+  baseWebpackConfig.entry[name] = ['./build/hot-reload.js', baseWebpackConfig.entry[name]]
 })
 
-module.exports = new Promise((resolve, reject) => {
-  portfinder.basePort = process.env.PORT || config.dev.port
-  portfinder.getPort((err, port) => {
-    if (err) {
-      reject(err)
-    } else {
-      // publish the new Port, necessary for e2e tests
-      process.env.PORT = port
-      // add port to devServer config
-      devWebpackConfig.devServer.port = port
-
-      // Add FriendlyErrorsPlugin
-      devWebpackConfig.plugins.push(new FriendlyErrorsPlugin({
-        compilationSuccessInfo: {
-          messages: [`Your application is running here: http://${config.dev.host}:${port}`],
-        },
-        onErrors: config.dev.notifyOnErrors
-        ? utils.createNotifierCallback()
-        : undefined
-      }))
-
-      resolve(devWebpackConfig)
-    }
-  })
+module.exports = merge(baseWebpackConfig, {
+  // eval-source-map is faster for development
+  devtool: '#cheap-module-eval-source-map',
+  devServer: {
+    historyApiFallback: true,
+    noInfo: true
+  },
+  module: {
+    rules: cssUtils.styleRules({
+      sourceMap: config.dev.cssSourceMap,
+      postcss: true
+    })
+  },
+  plugins: [
+    new webpack.HotModuleReplacementPlugin(),
+    new webpack.NoEmitOnErrorsPlugin(),
+    new HtmlWebpackPlugin({
+      filename: 'index.html',
+      template: 'src/index.html',
+      inject: true
+    }),
+    new FriendlyErrorsPlugin({
+      clearConsole: config.dev.clearConsoleOnRebuild
+    })
+  ],
+  performance: {
+    hints: false
+  }
 })

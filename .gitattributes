@@ -1,7 +1,0 @@
-dist/* linguist-vendored
-config/* linguist-vendored
-build/* linguist-vendored
-node_modules/* linguist-vendored
-src/* linguist-vendored
-.eslintrc.js linguist-vendored=true
-.postcssrc.js linguist-vendored=true
