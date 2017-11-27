@@ -117,8 +117,8 @@ export default {
             this.$root.$router.replace('/admin')
             // window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
         },
-        register() {
-            window.axios.defaults.headers.common['Authorization'] 
+        register(res) {
+            window.axios.defaults.headers.common['Authorization']  = 'Bearer ' + res.data.token;
 
         },
         sendForgotEmail() {

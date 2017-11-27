@@ -8,6 +8,7 @@ import (
 type Marker struct {
     ID          int             `json:"id"`
     Type_id     int             `json:"type_id"`
+    Project_id  int             `json:"project_id"`
     Lat         float32         `json:"lat"`
     Lng         float32         `json:"lng"`
     Start_date  sql.NullString  `json:"start_date"`
@@ -38,6 +39,7 @@ func GetMarkers(db *sql.DB) MarkerCollection {
         err2 := rows.Scan(
             &marker.ID,
             &marker.Type_id,
+            &marker.Project_id,
             &marker.Lat,
             &marker.Lng,
             &marker.Start_date,
@@ -55,7 +57,7 @@ func GetMarkers(db *sql.DB) MarkerCollection {
 
 func PostMarker(db *sql.DB, marker Marker) (int64, error) {
     sql := `
-    INSERT INTO markers(type_id, lat, lng, start_date, end_date, info) 
+    INSERT INTO markers(type_id, project_id, lat, lng, start_date, end_date, info) 
     VALUES(?, ?, ?, ?, ?, ?)
     `
     // Create a prepared SQL statement
@@ -65,7 +67,7 @@ func PostMarker(db *sql.DB, marker Marker) (int64, error) {
     // Make sure to cleanup after the program exits
     defer stmt.Close()
     // Replace the '?' in our prepared statement with 'name'
-    result, err2 := stmt.Exec(marker.Type_id, marker.Lat, marker.Lng, marker.Start_date, marker.End_date, marker.Info)
+    result, err2 := stmt.Exec(marker.Type_id, marker.Project_id, marker.Lat, marker.Lng, marker.Start_date, marker.End_date, marker.Info)
     // Exit if we get an error
     checkErr(err2);
 
@@ -74,7 +76,7 @@ func PostMarker(db *sql.DB, marker Marker) (int64, error) {
 
 func PutMarker(db *sql.DB, marker Marker, id int) (int64, error) {
     sql := `
-    UPDATE markers SET type_id = ?, lat = ?, lng = ?, start_date = ?, end_date = ?, info = ? where id = ?
+    UPDATE markers SET type_id = ?, project_id = ?, lat = ?, lng = ?, start_date = ?, end_date = ?, info = ? where id = ?
     `
     // Create a prepared SQL statement
     stmt, err := db.Prepare(sql)
@@ -83,7 +85,7 @@ func PutMarker(db *sql.DB, marker Marker, id int) (int64, error) {
     // Make sure to cleanup after the program exits
     defer stmt.Close()
     // Replace the '?' in our prepared statement with 'name'
-    result, err2 := stmt.Exec(marker.Type_id, marker.Lat, marker.Lng, marker.Start_date, marker.End_date, marker.Info, id)
+    result, err2 := stmt.Exec(marker.Type_id, marker.Project_id, marker.Lat, marker.Lng, marker.Start_date, marker.End_date, marker.Info, id)
     // Exit if we get an error
     checkErr(err2);
 

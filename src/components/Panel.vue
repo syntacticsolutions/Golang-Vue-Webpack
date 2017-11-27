@@ -8,7 +8,11 @@
                 {{ showDates(item.start_date.String, item.end_date.String) }}
             </span>
             <ul>
-                <li v-for=""></li>
+                <li 
+                v-if="marker_types"
+                v-for="(marker, id) in markers" 
+                :key="id" 
+                v-html="marker.svg"></li>
             </ul>
         </div>
     </div>
@@ -30,19 +34,25 @@ export default {
     },
     methods: {
         regenerateProjects(){
-            if(!this.projects ||
-            !this.markers ||
-            !this.marker_types)return;
-            
-            this.project['markers'] = {}
-            // && !_.isEmpty(this.contractors))
-            _.each(this.markers, (marker)=>{
-                this.project.markers[marker.id] = marker
-            })
+            if(!_.isEmpty(this.projects)
+            && !_.isEmpty(this.markers)
+            && !_.isEmpty(this.marker_types)
+            && !_.isEmpty(this.contractors))
+
+            for(let id in this.markers){
+                this.markers[id]['svg'] = this.marker_types[this.markers[id].type_id].svg.replaceAll(
+                    '{{}}', 
+                    this.contractors[this.projects[this.markers[id].project_id].contractor_id].color
+                )
+                this.projects[this.markers[id].project_id].markers[id] = this.markers[id]
+            }
 
         },
         showDates(start, end){
-            return this.userFormatDate(start) + ' - ' + this.userFormatDate(end)
+            let first = start ? this.userFormatDate(start) : 'unknown'
+            let last = end ? this.userFormatDate(end) : 'unknown'
+            
+            return first + ' - ' + last;
         },
         userFormatDate(date){
             let arr =  date.split(' ')[0].split('-')
@@ -54,6 +64,7 @@ export default {
         .then(res => {
             this.projects = {}
             _.each(res.data.projects, (project)=>{
+                project['markers'] = {}
                 this.projects[project.id] = project;
             })
             this.regenerateProjects()
@@ -63,6 +74,7 @@ export default {
         .then(res => {
             this.markers = {}
             _.each(res.data.markers, (marker)=>{
+                marker.svg = ""
                 this.markers[marker.id] = marker;
             })
             this.regenerateProjects()
@@ -77,9 +89,21 @@ export default {
             this.regenerateProjects()
         })
 
+        axios.get(config.host + '/api/contractors')
+        .then(res => {
+            this.contractors = {}
+            _.each(res.data.contractors, (contractor)=>{
+                this.contractors[contractor.id] = contractor;
+            })
+        })
+
         window.panel = this;
     }
 }
+String.prototype.replaceAll = function(delimiter, replacement){
+    return this.split(delimiter).join(replacement);
+}
+
 </script>
 
 <style lang="scss" scoped>
@@ -117,6 +141,11 @@ export default {
 
 ul {
     list-style-type: none;
+    display: inline-flex;
+    float:left;
+    clear:left;
+    padding-left: 10px;
+    margin-top: 5px;
 }
 
 </style>
