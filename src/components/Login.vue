@@ -1,30 +1,38 @@
 <template>
-<div class="text-center" style="padding:50px 0">
-	<div class="logo">login</div>
+<div class="text-center" style="padding:50px 0">	
 	<!-- Main Form -->
 	<div class="login-form-1">
+        <div class="logo text-left">
+            <h5 v-if="action === 'login'">Project Map Login</h5>
+            <h5 v-if="action === 'register'">Registration</h5>
+            <h5 v-if="action === 'forgot'">Forgot Password</h5>
+        </div>
 		<form id="login-form" class="text-left">
 			<div class="login-form-main-message"></div>
 			<div class="main-login-form">
 				<div class="login-group">
-					<div class="form-group">
-						<label for="lg_username" class="sr-only">Username</label>
-						<input type="text" class="form-control" id="lg_username" name="lg_username" placeholder="username">
-					</div>
-					<div class="form-group">
-						<label for="lg_password" class="sr-only">Password</label>
-						<input type="password" class="form-control" id="lg_password" name="lg_password" placeholder="password">
-					</div>
+                    <q-input v-if="action === 'register'" v-model="first_name" float-label="First Name" placeholder="First Name" />
+                    <q-input v-if="action === 'register'" v-model="last_name" float-label="Last Name" placeholder="Last Name" />
+                    <q-input v-model="email" float-label="Email" placeholder="Email" />
+                    <q-input v-if="action !== 'forgot'" type="password" v-model="password" float-label="Password" placeholder="Password" />
+                    <q-input v-if="action === 'register'" type="password" v-model="confirm_password" float-label="Confirm Password" placeholder="Confirm Password" />
 					<div class="form-group login-group-checkbox">
 						<input type="checkbox" id="lg_remember" name="lg_remember">
 						<label for="lg_remember">remember</label>
 					</div>
 				</div>
-				<button type="submit" class="login-button"><i class="fa fa-chevron-right"></i></button>
+				<button @keyup.enter="submit()" @click="submit()" class="login-button"><i class="fa fa-chevron-right"></i></button>
 			</div>
-			<div class="etc-login-form">
-				<p v-if="action === 'login'">forgot your password? <a @click="setForm('register')">click here</a></p>
-				<p v-if="action === 'login'">new user? <a @click="setForm('forgot')">create new account</a></p>
+			<div class="etc-login-form" v-if="action === 'login'">
+				<p>forgot your password? <a @click="setForm('forgot')">click here</a></p>
+				<p>new user? <a @click="setForm('register')">create new account</a></p>
+			</div>
+            <div class="etc-login-form" v-if="action === 'register'">
+				<p>already have an account? <a @click="setForm('login')">sign in</a></p>
+			</div>
+            <div class="etc-login-form" v-if="action === 'forgot'">
+				<p>new user? <a @click="setForm('register')">create new account</a></p>
+                <p>login? <a @click="setForm('login')">click here</a></p>
 			</div>
 		</form>
 	</div>
@@ -34,15 +42,28 @@
 
 <script>
 
+import { QInput } from 'quasar'
+
 export default {
+    components: {
+        QInput
+    },
     data () {
         return {
-            action:'login'
+            action:'login',
+            email: null,
+            password: null,
+            confirm_password: null,
+            first_name: null,
+            last_name: null
         }
     },
     methods: {
         setForm(val){
             this.action = val
+        },
+        submit(){
+            // TODO
         }
 
     }
@@ -96,9 +117,11 @@ a:hover {
 }
 /*=== 4. Main Form ===*/
 .login-form-1 {
-  max-width: 300px;
-  border-radius: 5px;
-  display: inline-block;
+    max-width: 300px;
+    border-radius: 5px;
+    display: inline-block;
+    margin-right: 25px;
+    width: 285px;
 }
 .main-login-form {
   position: relative;
@@ -134,7 +157,7 @@ a:hover {
   background: #ffffff;
   color: #999999;
   border-radius: 8px;
-  padding: 10px 20px;
+  padding: 10px 25px;
 }
 .login-group-checkbox {
   padding: 5px 0;
@@ -287,11 +310,11 @@ label.form-invalid:after {
 }
 [type="checkbox"]:disabled:checked + label:after,
 [type="radio"]:disabled:checked + label:after {
-  color: #555555;
+  color: #498C8C;
 }
 [type="checkbox"]:disabled + label,
 [type="radio"]:disabled + label {
-  color: #8c8c8c;
+  color: #498C8C;
 }
 /* accessibility */
 [type="checkbox"]:checked:focus + label:before,
@@ -302,7 +325,7 @@ label.form-invalid:after {
 }
 /* hover style just for information */
 label:hover:before {
-  border: 1px solid #f6f6f6 !important;
+  border: 1px solid #498C8C !important;
 }
 /*=== Customization ===*/
 /* radio aspect */
@@ -332,11 +355,12 @@ label:hover:before {
 }
 /*=== 9. Misc ===*/
 .logo {
-  padding: 15px 0;
+  padding: 15px 20px;
   font-size: 25px;
-  color: #DB0000;
-  font-weight: bold;
+  color: #498C8C;
+  font-weight: 700;
   position:relative;
+  white-space:nowrap;
 }
 
 </style>
