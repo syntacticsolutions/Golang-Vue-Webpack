@@ -110,11 +110,13 @@ export default {
             }
         },
         login(res) {
-            window.axios.defaults.headers.common['X-CSRF-TOKEN'] = res.data.token;
-            window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
-            console.log('got header')
+            window.axios.defaults.headers.common['Authorization'] = 'Bearer ' + res.data.token;
+            this.$root.user.id = res.data.id;
+            this.$root.user.name = res.data.name
+            // window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
         },
         register() {
+            window.axios.defaults.headers.common['Authorization'] 
 
         },
         sendForgotEmail() {

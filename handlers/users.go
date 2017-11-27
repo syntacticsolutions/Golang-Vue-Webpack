@@ -53,11 +53,16 @@ func Login(db *sql.DB) echo.HandlerFunc {
         var uid int
         var useremail string
         var userpass string
+        var first_name string
+        var perms string
         //TODO BCrypt
 
         err = db.QueryRow(`
-            SELECT id, email, password FROM users WHERE email = ? AND password = ?
-            `, email, password).Scan(&uid, &useremail, &userpass)
+            SELECT users.id, email, password, first_name, user_type
+            FROM users
+            LEFT JOIN user_types ON users.user_type_id = user_types.id
+            WHERE email = ? AND password = ?
+            `, email, password).Scan(&uid, &useremail, &userpass, &first_name, &perms)
 
         checkErr(err)
 
@@ -82,6 +87,9 @@ func Login(db *sql.DB) echo.HandlerFunc {
             }
             return c.JSON(http.StatusOK, echo.Map{
                 "token": t,
+                "id": uid,
+                "name": first_name,
+                "permissions": perms,
             })
         }
 

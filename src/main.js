@@ -38,6 +38,12 @@ Quasar.start(() => {
   /* eslint-disable no-new */
 	window.vue = new Vue({
 		el: '#q-app',
+		data: {
+			user: {
+				id: null,
+				name: null
+			}
+		},
 		router,
 		render: h => h(require('./App').default)
 	})
