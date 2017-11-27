@@ -113,6 +113,8 @@ export default {
             window.axios.defaults.headers.common['Authorization'] = 'Bearer ' + res.data.token;
             this.$root.user.id = res.data.id;
             this.$root.user.name = res.data.name
+
+            this.$root.$router.replace('/admin')
             // window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
         },
         register() {
