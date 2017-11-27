@@ -19,6 +19,7 @@
 </template>
 
 <script>
+
 const _ = {
     each: require('lodash/each'),
     isEmpty: require('lodash/isEmpty')
@@ -29,7 +30,7 @@ export default {
         return {
             projects: null,
             markers: null,
-            marker_types: null
+            marker_types: null,
         }
     },
     methods: {
@@ -39,11 +40,12 @@ export default {
             && !_.isEmpty(this.marker_types)
             && !_.isEmpty(this.contractors))
 
-            for(let id in this.markers){
+            for(var id in this.markers){
                 this.markers[id]['svg'] = this.marker_types[this.markers[id].type_id].svg.replaceAll(
                     '{{}}', 
                     this.contractors[this.projects[this.markers[id].project_id].contractor_id].color
                 )
+                this.$emit('makeMarker', this.markers[id]);
                 this.projects[this.markers[id].project_id].markers[id] = this.markers[id]
             }
 
@@ -114,14 +116,20 @@ String.prototype.replaceAll = function(delimiter, replacement){
     background-color: white;
     z-index: 1;
     position: absolute;
+    overflow-y: scroll;
 }
 
 .project-item {
-    background-color:red;
+    background-color:white;
     width:100%;
     height: 125px;
     float:left;
     clear:left;
+}
+
+.project-item:hover{
+    color:white;
+    background-color:lightgrey;
 }
 
 .project-title{

@@ -4,24 +4,30 @@
 
 <script>
 export default {
+    props:['markers'],
     data() {
         return {
             api_key: "AIzaSyCOSu1gCWOJNX8tuZHnBL5a-NkXc_orSfY"
         }
     },
+    methods: {
+        initMap() {
+            let location = 
+            {
+                "lng": -121.28925,
+                "lat": 38.761578
+            }
+            window.map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 15,
+                center: location
+            });
+        }
+    },
     mounted() {
-        let newScript = document.createElement("script");
-        newScript.src = "https://maps.googleapis.com/maps/api/js?key=" + this.api_key + "&callback=initMap";
-        $('body')[0].appendChild(newScript);
-    }
-}
 
-window.initMap = () => {
-    let location = {lat: -25.363, lng: 131.044};
-    window.map = new google.maps.Map(document.getElementById('map'), {
-        zoom: 4,
-        center: location
-    });
+        this.initMap();
+
+    }
 }
 </script>
 

@@ -9,9 +9,9 @@
             <q-btn flat><q-icon size="50px" name="router" /></q-btn> -->
             <q-btn flat><q-icon size="50px" name="menu" /></q-btn>
         </q-toolbar>
-        <Panel></Panel>
-        <Map></Map>
-        <Toolbar></Toolbar>
+        <Panel @makeMarker="makeMarker"></Panel>
+        <Map :markers="markers"></Map>
+        <!-- <Toolbar></Toolbar> -->
     </div>
 </template>
 
@@ -23,6 +23,11 @@ import Toolbar from './Toolbar.vue'
 import Panel from './Panel.vue'
 
 export default {
+    data() {
+        return {
+            markers:{}
+        }
+    },
     components: {
         QToolbar,
         QToolbarTitle,
@@ -31,6 +36,28 @@ export default {
         Toolbar,
         Panel,
         Map
+    },
+    methods: {
+        makeMarker(marker) {
+            var img = {
+              url: 'data:image/svg+xml;base64,' + btoa(marker.svg),
+              size: new google.maps.Size(192, 21),
+              scaledSize: new google.maps.Size(192,21),
+              origin: new google.maps.Point(0, 0),
+              anchor: new google.maps.Point(88, 53)
+          };
+
+            this.markers[marker.id] = new google.maps.Marker({
+                position: {lat: marker.lat, lng: marker.lng},
+                map:map,
+                icon: img,
+                zIndex: 2,
+                optimized: false
+            })
+        }
+    },
+    mounted() {
+        window.view = this;
     }
   
 }
