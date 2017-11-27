@@ -17,6 +17,10 @@ import router from './router'
 Vue.config.productionTip = false
 Vue.use(Quasar) // Install Quasar Framework
 
+window.jQuery = window.$ = require('jquery')
+require('bootstrap')
+require('font-awesome/css/font-awesome.css')
+
 if (__THEME === 'mat') {
   require('quasar-extras/roboto-font')
 }
