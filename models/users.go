@@ -2,7 +2,7 @@ package models
 
 import (
     "database/sql"
-    "fmt"
+    // "fmt"
 )
 
 type User struct {
@@ -54,7 +54,7 @@ func GetUsers(db *sql.DB) UserCollection {
 
         result.Users = append(result.Users, user)
     }
-    fmt.Printf("%+v", result)
+    // fmt.Printf("%+v", result)
     return result
 }
 

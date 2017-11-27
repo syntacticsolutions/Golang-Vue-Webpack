@@ -2,7 +2,7 @@ package models
 
 import (
     "database/sql"
-    "fmt"
+    // "fmt"
 )
 
 type Marker struct {
@@ -50,7 +50,6 @@ func GetMarkers(db *sql.DB) MarkerCollection {
 
         result.Markers = append(result.Markers, marker)
     }
-    fmt.Printf("%+v", result)
     return result
 }
 

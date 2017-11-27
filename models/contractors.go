@@ -2,7 +2,7 @@ package models
 
 import (
     "database/sql"
-    "fmt"
+    // "fmt"
 )
 
 type Contractor struct {
@@ -42,7 +42,7 @@ func GetContractors(db *sql.DB) ContractorCollection {
 
         result.Contractors = append(result.Contractors, contractor)
     }
-    fmt.Printf("%+v", result)
+    // fmt.Printf("%+v", result)
     return result
 }
 

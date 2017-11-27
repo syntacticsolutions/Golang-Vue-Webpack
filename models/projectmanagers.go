@@ -2,7 +2,7 @@ package models
 
 import (
     "database/sql"
-    "fmt"
+    // "fmt"
 )
 
 type ProjectManager struct {
@@ -40,7 +40,7 @@ func GetProjectManagers(db *sql.DB) ProjectManagerCollection {
 
         result.ProjectManagers = append(result.ProjectManagers, project_manager)
     }
-    fmt.Printf("%+v", result)
+    // fmt.Printf("%+v", result)
     return result
 }
 

@@ -2,7 +2,7 @@ package models
 
 import (
     "database/sql"
-    "fmt"
+    // "fmt"
 )
 
 type MarkerType struct {
@@ -42,7 +42,7 @@ func GetMarkerTypes(db *sql.DB) MarkerTypeCollection {
 
         result.MarkerTypes = append(result.MarkerTypes, marker_type)
     }
-    fmt.Printf("%+v", result)
+    // fmt.Printf("%+v", result)
     return result
 }
 
