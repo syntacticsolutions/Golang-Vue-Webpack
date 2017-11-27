@@ -30,6 +30,9 @@ func main() {
 
     e.Use(middleware.Logger())
     e.Use(middleware.Recover())
+    e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+        AllowOrigins: []string{"*"},
+    }))
 
     // Login route
     e.POST("/login", handlers.Login(db))
