@@ -7,7 +7,7 @@
             <h5 v-if="action === 'register'">Registration</h5>
             <h5 v-if="action === 'forgot'">Forgot Password</h5>
         </div>
-		<form id="login-form" class="text-left">
+		<div id="login-form" class="text-left">
 			<div class="login-form-main-message"></div>
 			<div class="main-login-form">
 				<div class="login-group">
@@ -16,7 +16,7 @@
                     <q-input v-model="email" float-label="Email" placeholder="Email" />
                     <q-input v-if="action !== 'forgot'" type="password" v-model="password" float-label="Password" placeholder="Password" />
                     <q-input v-if="action === 'register'" type="password" v-model="confirm_password" float-label="Confirm Password" placeholder="Confirm Password" />
-					<div class="form-group login-group-checkbox">
+					<div class="form-group login-group-checkbox" v-if="action !== 'forgot'">
 						<input type="checkbox" id="lg_remember" name="lg_remember">
 						<label for="lg_remember">remember</label>
 					</div>
@@ -34,15 +34,26 @@
 				<p>new user? <a @click="setForm('register')">create new account</a></p>
                 <p>login? <a @click="setForm('login')">click here</a></p>
 			</div>
-		</form>
+		</div>
 	</div>
 	<!-- end:Main Form -->
 </div>
 </template>
 
 <script>
-
 import { QInput } from 'quasar'
+import axios from 'axios';
+
+const _ = {
+    cloneDeep: require('lodash/cloneDeep'),
+    omit: require('lodash/omit')
+}
+
+const endpoints = {
+    login: '/login',
+    register: '/register',
+    forgot: '/forgot_password'
+}
 
 export default {
     components: {
@@ -58,12 +69,56 @@ export default {
             last_name: null
         }
     },
+    mounted() {
+        window.login = this;
+    },
     methods: {
-        setForm(val){
+        setForm(val) {
             this.action = val
         },
-        submit(){
-            // TODO
+        submit() {
+            const apiString = endpoints[this.action];
+            const payload = this.getPayload(this.action);
+
+            axios.post(config.host + apiString, payload)
+            .then(res =>{
+                switch(this.action){
+                    case 'login': this.login(res);
+                    case 'register': this.register(res);
+                    case 'forgot': this.sendForgotEmail(res);
+                }
+            }, err => {
+                console.log(err);
+            })
+        },
+        getPayload(action) {
+            switch (action){
+
+                case 'login':
+                return {
+                    email: this.email,
+                    password: this.password
+                }
+
+                case 'register':
+                return _.omit(_.cloneDeep(this._data), 'action')
+
+                case 'forgot':
+                return {
+                    email: this.email
+                }
+            }
+        },
+        login(res) {
+            window.axios.defaults.headers.common['X-CSRF-TOKEN'] = res.data.token;
+            window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+            console.log('got header')
+        },
+        register() {
+
+        },
+        sendForgotEmail() {
+
         }
 
     }
