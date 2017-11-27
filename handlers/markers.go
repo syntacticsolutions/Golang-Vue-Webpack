@@ -3,7 +3,7 @@ package handlers
 import (
 	"database/sql"
     "net/http"
-    // "strconv"
+    "strconv"
     "go-echo-vue/models"
     "github.com/labstack/echo"
     // "encoding/json"
@@ -17,7 +17,7 @@ func GetMarkers(db *sql.DB) echo.HandlerFunc {
     }
 }
 
-func PostMarker(db *sqlMarker.DB) echo.HandlerFunc {
+func PostMarker(db *sql.DB) echo.HandlerFunc {
     return func(c echo.Context) error {
 
         var marker = models.Marker{}
@@ -72,11 +72,5 @@ func DeleteMarker(db *sql.DB) echo.HandlerFunc {
         } else {
             return err
         }
-    }
-}
-
-func checkErr(err error){
-    if err != nil {
-        panic(err)
     }
 }

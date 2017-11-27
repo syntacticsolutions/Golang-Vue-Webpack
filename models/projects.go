@@ -106,9 +106,3 @@ func DeleteProject(db *sql.DB, id int) (int64, error) {
 
     return result.RowsAffected()
 }
-
-func checkErr(err error){
-    if err != nil {
-        panic(err)
-    }
-}

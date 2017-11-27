@@ -3,7 +3,7 @@ package handlers
 import (
 	"database/sql"
     "net/http"
-    // "strconv"
+    "strconv"
     "go-echo-vue/models"
     "github.com/labstack/echo"
     // "encoding/json"
@@ -37,26 +37,6 @@ func PostProjectManager(db *sql.DB) echo.HandlerFunc {
     }
 }
 
-func PutProjectManager(db *sql.DB) echo.HandlerFunc {
-    return func(c echo.Context) error {
-        project_manager_id, _ := strconv.Atoi(c.Param("id"))
-        var project_manager = models.ProjectManager{}
-
-        c.Bind(&project_manager)
-
-        id, err := models.PutProjectManager(db, project_manager, project_manager_id)
-
-        if err == nil {
-            return c.JSON(http.StatusCreated, H{
-                "created": id,
-            })
-        // Handle any errors
-        } else {
-            return err
-        }
-    }
-}
-
 // DeleteProject endpoint
 func DeleteProjectManager(db *sql.DB) echo.HandlerFunc {
     return func(c echo.Context) error {
@@ -72,11 +52,5 @@ func DeleteProjectManager(db *sql.DB) echo.HandlerFunc {
         } else {
             return err
         }
-    }
-}
-
-func checkErr(err error){
-    if err != nil {
-        panic(err)
     }
 }

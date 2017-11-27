@@ -3,7 +3,7 @@ package handlers
 import (
 	"database/sql"
     "net/http"
-    // "strconv"
+    "strconv"
     "go-echo-vue/models"
     "github.com/labstack/echo"
     // "encoding/json"
@@ -72,11 +72,5 @@ func DeleteContractor(db *sql.DB) echo.HandlerFunc {
         } else {
             return err
         }
-    }
-}
-
-func checkErr(err error){
-    if err != nil {
-        panic(err)
     }
 }

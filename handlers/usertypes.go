@@ -3,17 +3,17 @@ package handlers
 import (
 	"database/sql"
     "net/http"
-    // "strconv"
+    "strconv"
     "go-echo-vue/models"
     "github.com/labstack/echo"
     // "encoding/json"
     // "time"
 )
 
-func GetUserType(db *sql.DB) echo.HandlerFunc {
+func GetUserTypes(db *sql.DB) echo.HandlerFunc {
     return func(c echo.Context) error {
         // Fetch tasks using our new model
-        return c.JSON(http.StatusOK, models.GetUserType(db))
+        return c.JSON(http.StatusOK, models.GetUserTypes(db))
     }
 }
 
