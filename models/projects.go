@@ -44,9 +44,6 @@ func GetProjects(db *sql.DB) ProjectCollection {
             &project.Start_date,
             &project.End_date)
 
-        // fmt.Printf(user.first_name)
-        // fmt.Printf("%+v", user)
-        // Exit if we get an error
         if err2 != nil {
             panic(err2)
         }
@@ -57,45 +54,61 @@ func GetProjects(db *sql.DB) ProjectCollection {
     return result
 }
 
+func PostProject(db *sql.DB, project Project) (int64, error) {
+    sql := `
+    INSERT INTO projects(primary_marker_id, contractor_id, pm_id, title, start_date, end_date) 
+    VALUES(?, ?, ?, ?, ?, ?)
+    `
+    // Create a prepared SQL statement
+    stmt, err := db.Prepare(sql)
+    // Exit if we get an error
+    checkErr(err)
+    // Make sure to cleanup after the program exits
+    defer stmt.Close()
+    // Replace the '?' in our prepared statement with 'name'
+    result, err2 := stmt.Exec(project.Primary_marker_id, project.Contractor_id, project.Pm_id, project.Title, project.Start_date, project.End_date)
+    // Exit if we get an error
+    checkErr(err2);
 
+    return result.LastInsertId()
+}
 
-// func PostProject(db *sql.DB, user User) (int64, error) {
-//     sql := `
-//     INSERT INTO users(user_type_id, first_name, last_name, email, password, phone, cell) 
-//     VALUES(?, ?, ?, ?, ?, ?, ?)
-//     `
-//     // Create a prepared SQL statement
-//     stmt, err := db.Prepare(sql)
-//     // Exit if we get an error
-//     checkErr(err)
-//     // Make sure to cleanup after the program exits
-//     defer stmt.Close()
-//     // Replace the '?' in our prepared statement with 'name'
-//     result, err2 := stmt.Exec(user.User_type_id, user.First_name, user.Last_name, user.Email, user.Password, user.Phone, user.Cell)
-//     // Exit if we get an error
-//     checkErr(err2);
+func PutProject(db *sql.DB, project Project, id int) (int64, error) {
+    sql := `
+    UPDATE projects SET primary_marker_id = ?, contractor_id = ?, pm_id = ?, title = ?, start_date = ?, end_date = ? where id = ?
+    `
+    // Create a prepared SQL statement
+    stmt, err := db.Prepare(sql)
+    // Exit if we get an error
+    checkErr(err)
+    // Make sure to cleanup after the program exits
+    defer stmt.Close()
+    // Replace the '?' in our prepared statement with 'name'
+    result, err2 := stmt.Exec(project.Primary_marker_id, project.Contractor_id, project.Pm_id, project.Title, project.Start_date, project.End_date, id)
+    // Exit if we get an error
+    checkErr(err2);
 
-//     return result.LastInsertId()
-// }
+    return result.LastInsertId()
+}
 
-// func DeleteProject(db *sql.DB, id int) (int64, error) {
-//     sql := "DELETE FROM users WHERE id = ?"
+func DeleteProject(db *sql.DB, id int) (int64, error) {
+    sql := "DELETE FROM projects WHERE id = ?"
 
-//     // Create a prepared SQL statement
-//     stmt, err := db.Prepare(sql)
-//     // Exit if we get an error
-//     checkErr(err)
+    // Create a prepared SQL statement
+    stmt, err := db.Prepare(sql)
+    // Exit if we get an error
+    checkErr(err)
 
-//     // Replace the '?' in our prepared statement with 'id'
-//     result, err2 := stmt.Exec(id)
-//     // Exit if we get an error
-//     checkErr(err2)
+    // Replace the '?' in our prepared statement with 'id'
+    result, err2 := stmt.Exec(id)
+    // Exit if we get an error
+    checkErr(err2)
 
-//     return result.RowsAffected()
-// }
+    return result.RowsAffected()
+}
 
-// func checkErr(err error){
-//     if err != nil {
-//         panic(err)
-//     }
-// }
+func checkErr(err error){
+    if err != nil {
+        panic(err)
+    }
+}

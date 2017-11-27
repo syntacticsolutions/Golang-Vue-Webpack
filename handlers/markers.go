@@ -10,21 +10,21 @@ import (
     // "time"
 )
 
-func GetProjects(db *sql.DB) echo.HandlerFunc {
+func GetMarkers(db *sql.DB) echo.HandlerFunc {
     return func(c echo.Context) error {
         // Fetch tasks using our new model
-        return c.JSON(http.StatusOK, models.GetProjects(db))
+        return c.JSON(http.StatusOK, models.GetMarkers(db))
     }
 }
 
-func PostProject(db *sql.DB) echo.HandlerFunc {
+func PostMarker(db *sqlMarker.DB) echo.HandlerFunc {
     return func(c echo.Context) error {
 
-        var project = models.Project{}
+        var marker = models.Marker{}
 
-        c.Bind(&project)
+        c.Bind(&marker)
         // // Add a task using our new model
-        id, err := models.PostProject(db, project)
+        id, err := models.PostMarker(db, marker)
         // Return a JSON response if successful
         if err == nil {
             return c.JSON(http.StatusCreated, H{
@@ -37,14 +37,14 @@ func PostProject(db *sql.DB) echo.HandlerFunc {
     }
 }
 
-func PutProject(db *sql.DB) echo.HandlerFunc {
+func PutMarker(db *sql.DB) echo.HandlerFunc {
     return func(c echo.Context) error {
-        project_id, _ := strconv.Atoi(c.Param("id"))
-        var project = models.Project{}
+        marker_id, _ := strconv.Atoi(c.Param("id"))
+        var marker = models.Marker{}
 
-        c.Bind(&project)
+        c.Bind(&marker)
 
-        id, err := models.PutProject(db, project, project_id)
+        id, err := models.PutMarker(db, marker, marker_id)
 
         if err == nil {
             return c.JSON(http.StatusCreated, H{
@@ -57,12 +57,12 @@ func PutProject(db *sql.DB) echo.HandlerFunc {
     }
 }
 
-// DeleteProject endpoint
-func DeleteProject(db *sql.DB) echo.HandlerFunc {
+// DeleteMarker endpoint
+func DeleteMarker(db *sql.DB) echo.HandlerFunc {
     return func(c echo.Context) error {
         id, _ := strconv.Atoi(c.Param("id"))
         // Use our new model to delete a task
-        _, err := models.DeleteProject(db, id)
+        _, err := models.DeleteMarker(db, id)
         // Return a JSON response on success
         if err == nil {
             return c.JSON(http.StatusOK, H{

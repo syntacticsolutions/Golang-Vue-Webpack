@@ -10,21 +10,21 @@ import (
     // "time"
 )
 
-func GetProjects(db *sql.DB) echo.HandlerFunc {
+func GetProjectManagers(db *sql.DB) echo.HandlerFunc {
     return func(c echo.Context) error {
-        // Fetch tasks using our new model
-        return c.JSON(http.StatusOK, models.GetProjects(db))
+        // Fetch tasks uProjectManagersing our new model
+        return c.JSON(http.StatusOK, models.GetProjectManagers(db))
     }
 }
 
-func PostProject(db *sql.DB) echo.HandlerFunc {
+func PostProjectManager(db *sql.DB) echo.HandlerFunc {
     return func(c echo.Context) error {
 
-        var project = models.Project{}
+        var project_manager = models.ProjectManager{}
 
-        c.Bind(&project)
+        c.Bind(&project_manager)
         // // Add a task using our new model
-        id, err := models.PostProject(db, project)
+        id, err := models.PostProjectManager(db, project_manager)
         // Return a JSON response if successful
         if err == nil {
             return c.JSON(http.StatusCreated, H{
@@ -37,14 +37,14 @@ func PostProject(db *sql.DB) echo.HandlerFunc {
     }
 }
 
-func PutProject(db *sql.DB) echo.HandlerFunc {
+func PutProjectManager(db *sql.DB) echo.HandlerFunc {
     return func(c echo.Context) error {
-        project_id, _ := strconv.Atoi(c.Param("id"))
-        var project = models.Project{}
+        project_manager_id, _ := strconv.Atoi(c.Param("id"))
+        var project_manager = models.ProjectManager{}
 
-        c.Bind(&project)
+        c.Bind(&project_manager)
 
-        id, err := models.PutProject(db, project, project_id)
+        id, err := models.PutProjectManager(db, project_manager, project_manager_id)
 
         if err == nil {
             return c.JSON(http.StatusCreated, H{
@@ -58,11 +58,11 @@ func PutProject(db *sql.DB) echo.HandlerFunc {
 }
 
 // DeleteProject endpoint
-func DeleteProject(db *sql.DB) echo.HandlerFunc {
+func DeleteProjectManager(db *sql.DB) echo.HandlerFunc {
     return func(c echo.Context) error {
         id, _ := strconv.Atoi(c.Param("id"))
         // Use our new model to delete a task
-        _, err := models.DeleteProject(db, id)
+        _, err := models.DeleteProjectManager(db, id)
         // Return a JSON response on success
         if err == nil {
             return c.JSON(http.StatusOK, H{
