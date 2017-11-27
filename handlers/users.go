@@ -15,8 +15,8 @@ import (
 type H map[string]interface{}
 
 type jwtCustomClaims struct {
-    email  string `json:"name"`
-    admin  bool   `json:"admin"`
+    Email  string `json:"name"`
+    Admin  bool   `json:"admin"`
     jwt.StandardClaims
 }
 
@@ -76,7 +76,7 @@ func Login(db *sql.DB) echo.HandlerFunc {
             token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
             // Generate encoded token and send it as response.
-            t, err := token.SignedString([]byte("secret"))
+            t, err := token.SignedString([]byte("fa39ps8ndf#$@#0p8@sd9s08df0-na88fnasdfn-a2080"))
             if err != nil {
                 return err
             }

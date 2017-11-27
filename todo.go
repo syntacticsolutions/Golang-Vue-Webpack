@@ -16,8 +16,8 @@ import (
 )
 
 type jwtCustomClaims struct {
-    email  string `json:"name"`
-    admin  bool   `json:"admin"`
+    Email  string `json:"name"`
+    Admin  bool   `json:"admin"`
     jwt.StandardClaims
 }
 
@@ -39,44 +39,48 @@ func main() {
     e.POST("/Register", handlers.PostUser(db))
 
     // Restricted group
-    r := e.Group("/restricted")
-    r.Use(middleware.JWT([]byte("secret")))
+    r := e.Group("/api")
+    config := middleware.JWTConfig{
+		Claims:     &jwtCustomClaims{},
+		SigningKey: []byte("fa39ps8ndf#$@#0p8@sd9s08df0-na88fnasdfn-a2080"),
+    }
+    r.Use(middleware.JWTWithConfig(config))
     r.GET("", restricted)
 
     e.Static("/", "dist")
-    e.GET("/api/users", handlers.GetUsers(db))
-    e.POST("/api/users", handlers.PostUser(db))
-    e.PUT("/api/users/:id", handlers.PutUser(db))
-    e.DELETE("/api/users/:id", handlers.DeleteUser(db))
+    r.GET("/api/users", handlers.GetUsers(db))
+    r.POST("/api/users", handlers.PostUser(db))
+    r.PUT("/api/users/:id", handlers.PutUser(db))
+    r.DELETE("/api/users/:id", handlers.DeleteUser(db))
 
-    e.GET("/api/projects", handlers.GetProjects(db))
-    e.POST("/api/projecs", handlers.PostProject(db))
-    e.PUT("/api/projects/:id", handlers.PutProject(db))
-    e.DELETE("/api/projects/:id", handlers.DeleteProject(db))
+    r.GET("/api/projects", handlers.GetProjects(db))
+    r.POST("/api/projecs", handlers.PostProject(db))
+    r.PUT("/api/projects/:id", handlers.PutProject(db))
+    r.DELETE("/api/projects/:id", handlers.DeleteProject(db))
 
-    e.GET("/api/markers", handlers.GetMarkers(db))
-    e.POST("/api/markers", handlers.PostMarker(db))
-    e.PUT("/api/markers/:id", handlers.PutMarker(db))
-    e.DELETE("/api/markers/:id", handlers.DeleteMarker(db))
+    r.GET("/api/markers", handlers.GetMarkers(db))
+    r.POST("/api/markers", handlers.PostMarker(db))
+    r.PUT("/api/markers/:id", handlers.PutMarker(db))
+    r.DELETE("/api/markers/:id", handlers.DeleteMarker(db))
 
-    e.GET("/api/marker_types", handlers.GetMarkerTypes(db))
-    e.POST("/api/marker_types", handlers.PostMarkerType(db))
-    e.PUT("/api/marker_types/:id", handlers.PutMarkerType(db))
-    e.DELETE("/api/marker_types/:id", handlers.DeleteMarkerType(db))
+    r.GET("/api/marker_types", handlers.GetMarkerTypes(db))
+    r.POST("/api/marker_types", handlers.PostMarkerType(db))
+    r.PUT("/api/marker_types/:id", handlers.PutMarkerType(db))
+    r.DELETE("/api/marker_types/:id", handlers.DeleteMarkerType(db))
 
-    e.GET("/api/user_types", handlers.GetUserTypes(db))
-    e.POST("/api/user_types", handlers.PostUserType(db))
-    e.PUT("/api/user_types/:id", handlers.PutUserType(db))
-    e.DELETE("/api/user_types/:id", handlers.DeleteUserType(db))
+    r.GET("/api/user_types", handlers.GetUserTypes(db))
+    r.POST("/api/user_types", handlers.PostUserType(db))
+    r.PUT("/api/user_types/:id", handlers.PutUserType(db))
+    r.DELETE("/api/user_types/:id", handlers.DeleteUserType(db))
 
-    e.GET("/api/contractors", handlers.GetContractors(db))
-    e.POST("/api/contractors", handlers.PostContractor(db))
-    e.PUT("/api/contractors/:id", handlers.PutContractor(db))
-    e.DELETE("/api/contractors/:id", handlers.DeleteContractor(db))
+    r.GET("/api/contractors", handlers.GetContractors(db))
+    r.POST("/api/contractors", handlers.PostContractor(db))
+    r.PUT("/api/contractors/:id", handlers.PutContractor(db))
+    r.DELETE("/api/contractors/:id", handlers.DeleteContractor(db))
 
-    e.GET("/api/project_managers", handlers.GetProjectManagers(db))
-    e.POST("/api/project_managers", handlers.PostProjectManager(db))
-    e.DELETE("/api/project_managers/:id", handlers.DeleteProjectManager(db))
+    r.GET("/api/project_managers", handlers.GetProjectManagers(db))
+    r.POST("/api/project_managers", handlers.PostProjectManager(db))
+    r.DELETE("/api/project_managers/:id", handlers.DeleteProjectManager(db))
 
     
     // e.POST("/api/projects", handlers.PostProject(db))
@@ -137,7 +141,7 @@ func accessible(c echo.Context) error {
 func restricted(c echo.Context) error {
     user := c.Get("user").(*jwt.Token)
     claims := user.Claims.(*jwtCustomClaims)
-    email := claims.email
+    email := claims.Email
     return c.String(http.StatusOK, "Welcome "+email+"!")
 }
 
