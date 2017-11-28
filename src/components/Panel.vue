@@ -1,6 +1,7 @@
 <template>
     <div class="panel">
-        <div class="project-item" v-for="(item, id) in projects" :key="id">
+        <Accordion v-if="project" :project="project"></Accordion>
+        <div v-show="!project" @click="showProjectAccordion(item)" class="project-item" v-for="(item, id) in projects" :key="id">
             <span class="project-title">
                 {{ item.title }}
             </span>
@@ -20,17 +21,23 @@
 
 <script>
 
+import Accordion from './Accordion'
+
 const _ = {
     each: require('lodash/each'),
     isEmpty: require('lodash/isEmpty')
 }
 
 export default {
+    components: {
+        Accordion
+    },
     data() {
         return {
             projects: null,
             markers: null,
             marker_types: null,
+            project: 0,
         }
     },
     methods: {
@@ -59,6 +66,9 @@ export default {
         userFormatDate(date){
             let arr =  date.split(' ')[0].split('-')
             return arr[1] + '/' + arr[2] + '/' + arr[0]
+        },
+        showProjectAccordion(project){
+            this.project = project;
         }
     },  
     mounted(){

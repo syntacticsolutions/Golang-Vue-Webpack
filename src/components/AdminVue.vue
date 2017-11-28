@@ -9,7 +9,9 @@
             <q-btn flat><q-icon size="50px" name="router" /></q-btn> -->
             <q-btn flat><q-icon size="50px" name="menu" /></q-btn>
         </q-toolbar>
-        <Panel @makeMarker="makeMarker"></Panel>
+        <Panel 
+        @makeMarker="makeMarker">
+        </Panel>
         <Map :markers="markers"></Map>
         <!-- <Toolbar></Toolbar> -->
     </div>

@@ -24,7 +24,7 @@ window.config = {
 	host: 'http://localhost:1323'
 }
 
-require('bootstrap')
+require('bootstrap');
 
 if (__THEME === 'mat') {
 	require('quasar-extras/roboto-font')
