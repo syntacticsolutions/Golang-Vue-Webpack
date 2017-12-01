@@ -43,6 +43,13 @@
   </q-collapsible>
   <q-collapsible icon="location_on" label="Marker(s)">
     <div>
+		<q-chip v-for="(marker, id) in project.markers"
+			closable
+			:key="id"
+			:style="'background:' +  project.color + ';color:#f1f1f1;'"
+			@close="confirmDeleteMarker(marker)">
+			{{ marker.type.split('_').map(res=>res.capitalize()).join(' ') }}
+		</q-chip>
     </div>
   </q-collapsible>
 </q-list>
@@ -50,7 +57,7 @@
 
 <script>
 
-import { QList, QCollapsible, QInput, QDatetimeRange, QSelect } from 'quasar';
+import { QList, QCollapsible, QInput, QDatetimeRange, QSelect, QChip } from 'quasar';
 const _ = {
 	each: require('lodash/each'),
 	isEmpty: require('lodash/isEmpty')
@@ -63,7 +70,8 @@ export default {
         QCollapsible,
         QInput,
         QDatetimeRange,
-        QSelect
+        QSelect,
+		QChip
     },
 	data(){
 		return {
@@ -124,6 +132,12 @@ export default {
 	}
 
 }
+
+String.prototype.capitalize = function(){
+	let firstLetter = this.charAt(0).toUpperCase()
+	return firstLetter + this.slice(1)
+}
+
 </script>
 <style lang="scss" scoped>
 .fa-github:before {

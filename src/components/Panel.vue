@@ -8,9 +8,8 @@
             <span class="project-dates">
                 {{ showDates(item.start_date.String, item.end_date.String) }}
             </span>
-            <ul>
-                <li 
-                v-if="marker_types"
+            <ul v-if="marker_types">
+                <li
                 v-for="(marker, id) in markers" 
                 :key="id" 
                 v-html="marker.svg"></li>
@@ -42,19 +41,31 @@ export default {
     },
     methods: {
         regenerateProjects(){
+            var self = this;
             if(!_.isEmpty(this.projects)
             && !_.isEmpty(this.markers)
             && !_.isEmpty(this.marker_types)
-            && !_.isEmpty(this.contractors))
+            && !_.isEmpty(this.contractors)){
 
-            for(var id in this.markers){
-                this.markers[id]['svg'] = this.marker_types[this.markers[id].type_id].svg.replaceAll(
-                    '{{}}', 
-                    this.contractors[this.projects[this.markers[id].project_id].contractor_id].color
-                )
-                this.$emit('makeMarker', this.markers[id]);
-                this.projects[this.markers[id].project_id].markers[id] = this.markers[id]
+                _.each(this.markers, (marker)=>{
+                    marker.svg.replaceAll(
+                        '{{}}',
+                        self.projects[marker.project_id].color
+                    )
+                    self.$emit('makeMarker', marker);
+                    self.projects[marker.project_id].markers[marker.id] = marker;
+                })
             }
+
+            // for(var id in this.markers){
+            //     this.markers[id]['type'] = this.marker_types[this.markers[id].type_id].marker_type
+            //     this.markers[id]['svg'] = this.marker_types[this.markers[id].type_id].svg.replaceAll(
+            //         '{{}}', 
+            //         this.contractors[this.projects[this.markers[id].project_id].contractor_id].color
+            //     )
+            //     this.$emit('makeMarker', this.markers[id]);
+            //     this.projects[this.markers[id].project_id].markers[id] = this.markers[id]
+            // }
 
         },
         showDates(start, end){
