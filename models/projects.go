@@ -15,12 +15,34 @@ type Project struct {
     End_date sql.NullString `json:"end_date"`
 }
 
+type GetProject struct {
+    ID int `json:"id"`
+    Primary_marker_id int `json:"primary_marker_id`
+    Contractor_id int `json:"contractor_id"`
+    Pm_id int `json:"pm_id"`
+    Title string `json:"title"`
+    Start_date sql.NullString `json:"start_date"`
+    End_date sql.NullString `json:"end_date"`
+    Contractor string `json:"contractor"`
+    Contractor_phone string `json:"contractor_phone"`
+    Contractor_cell string `json:"contractor_cell"`
+    Contractor_email string `json:"contractor_email"`
+    Project_manager string `json:"project_manager"`
+    Project_manager_cell string `json:"project_manager_cell"`
+    Project_manager_phone string `json:"project_manager_phone"`
+    Project_manager_email string `json:"project_manager_email"`
+}
+
 // TaskCollection is collection of Tasks
 type ProjectCollection struct {
     Projects []Project `json:"projects"`
 }
 
-func GetProjects(db *sql.DB) ProjectCollection {
+type GetProjectCollection struct {
+    GetProjects []GetProject `json:"projects"`
+}
+
+func GetProjects(db *sql.DB) GetProjectCollection {
 
     sql := `SELECT projects.id,
     primary_marker_id,
@@ -41,7 +63,7 @@ func GetProjects(db *sql.DB) ProjectCollection {
     LEFT JOIN project_managers on project_managers.user_id = pm_id
     LEFT JOIN users A on contractors.user_id = A.id
     LEFT JOIN users B on project_managers.user_id = B.id;`
-    
+
     rows, err := db.Query(sql)
     // Exit if the SQL doesn't work for some reason
     if err != nil {
@@ -50,10 +72,10 @@ func GetProjects(db *sql.DB) ProjectCollection {
     // make sure to cleanup when the program exits
     defer rows.Close()
 
-    result := ProjectCollection{}
+    result := GetProjectCollection{}
 
     for rows.Next() {
-        project := Project{}
+        project := GetProject{}
         err2 := rows.Scan(
             &project.ID,
             &project.Primary_marker_id,
@@ -61,13 +83,21 @@ func GetProjects(db *sql.DB) ProjectCollection {
             &project.Pm_id,
             &project.Title,
             &project.Start_date,
-            &project.End_date)
+            &project.End_date,
+            &project.Project_manager,
+            &project.Project_manager_phone,
+            &project.Project_manager_cell,
+            &project.Project_manager_email,
+            &project.Contractor,
+            &project.Contractor_phone,
+            &project.Contractor_cell,
+            &project.Contractor_email)
 
         if err2 != nil {
             panic(err2)
         }
 
-        result.Projects = append(result.Projects, project)
+        result.GetProjects = append(result.GetProjects, project)
     }
     // fmt.Printf("%+v", result)
     return result
