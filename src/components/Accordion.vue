@@ -2,22 +2,27 @@
 <q-list>
   <q-collapsible icon="explore" label="Project Info">
     <div>
-      <!-- <q-input v-model="project.title" float-label="Project Title"/> -->
+      <q-input v-model="project.title" float-label="Project Title"/>
     </div>
   </q-collapsible>
   <q-collapsible icon="fa-calendar" label="Project Dates">
     <div>
-      <q-datetime-range
+      <!-- <q-datetime-range
         type="date"
         v-model="range"
         <!-- :min="range.start || undefined"
         :max="range.end || undefined" -->
-        />
+        /> -->
     </div>
   </q-collapsible>
     <q-collapsible icon="fa-twitter" label="Project Manager">
     <div>
-        <q-input v-model="project.project_manager"
+        <q-select
+          v-model="project.project_manager"
+          float-label="Project Manager"
+          :options="[]"
+        />
+
     </div>
   </q-collapsible>
     <q-collapsible icon="fa-github" label="Contractor">
@@ -35,7 +40,7 @@
 
 <script>
 
-import { QList, QCollapsible, QInput, QDatetimeRange } from 'quasar';
+import { QList, QCollapsible, QInput, QDatetimeRange, QSelect } from 'quasar';
 
 export default {
     props: ['project'],
@@ -43,7 +48,8 @@ export default {
         QList,
         QCollapsible,
         QInput,
-        QDatetimeRange
+        QDatetimeRange,
+        QSelect
     },
     created(){
 
