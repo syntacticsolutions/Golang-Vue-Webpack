@@ -10,29 +10,39 @@
       <!-- <q-datetime-range
         type="date"
         v-model="range"
-        <!-- :min="range.start || undefined"
-        :max="range.end || undefined" -->
+    	:min="range.start || undefined"
+        :max="range.end || undefined"
         /> -->
     </div>
   </q-collapsible>
     <q-collapsible icon="fa-twitter" label="Project Manager">
     <div>
         <q-select
-          v-model="project.project_manager"
+          v-model="project.pm_id"
           float-label="Project Manager"
-          :options="[]"
+          :options="pmOptions"
+          @change="changePM"
         />
-
+		<q-input v-model="project.project_manager_email" float-label="Email" :disable="true" />
+		<q-input v-model="project.project_manager_phone" float-label="Office Phone" :disable="true"/>
+		<q-input v-model="project.project_manager_cell" float-lavel="Cell" :disable="true"/>
     </div>
   </q-collapsible>
     <q-collapsible icon="fa-github" label="Contractor">
     <div>
-      Content
+      <q-select
+          v-model="project.contractor_id"
+          float-label="Contractor"
+          :options="contractorOptions"
+          @change="changeContractor"
+        />
+		<q-input v-model="project.contractor_email" float-label="Email" :disable="true" />
+		<q-input v-model="project.contractor_phone" float-label="Office Phone" :disable="true"/>
+		<q-input v-model="project.contractor_cell" float-lavel="Cell" :disable="true"/>
     </div>
   </q-collapsible>
   <q-collapsible icon="location_on" label="Marker(s)">
     <div>
-      Content
     </div>
   </q-collapsible>
 </q-list>
@@ -41,6 +51,10 @@
 <script>
 
 import { QList, QCollapsible, QInput, QDatetimeRange, QSelect } from 'quasar';
+const _ = {
+	each: require('lodash/each'),
+	isEmpty: require('lodash/isEmpty')
+}
 
 export default {
     props: ['project'],
@@ -51,6 +65,14 @@ export default {
         QDatetimeRange,
         QSelect
     },
+	data(){
+		return {
+			project_managers: {},
+			pmOptions: [],
+			contractorOptions: [],
+			contractors: {}
+		}
+	},
     created(){
 
     },
@@ -62,7 +84,44 @@ export default {
         //         to: 0
         //     }
         // }
-    }
+    },
+	methods: {
+		changePM(id){
+			this.project.project_manager = this.project_managers[id].project_manager;
+			this.project.pm_id = id;
+			this.project.project_manager_cell = this.project_managers[id].project_manager_cell
+			this.project.project_manager_phone = this.project_managers[id].project_manager_phone
+			this.project.project_manager_email = this.project_managers[id].project_manager_email
+		},
+		changeContractor(id){
+			this.project.contractor = this.contractors[id].contractor;
+			this.project.contractor_id = id;
+			this.project.contractor_cell = this.contractors[id].contractor_cell
+			this.project.contractor_phone = this.contractors[id].contractor_phone
+			this.project.contractor_email = this.contractors[id].contractor_email
+			this.project.color = this.contractors[id].color
+		}
+	},
+	mounted(){
+		window.accord = this;
+		axios.get(config.host + '/api/project_managers')
+		.then(res => {
+			var self = this;
+			_.each(res.data.project_managers, (pm)=>{
+				self.project_managers[pm.id] = pm;
+				self.pmOptions.push({label: pm.project_manager, value: pm.id});
+			})
+		})
+
+		axios.get(config.host + '/api/contractors')
+		.then(res => {
+			var self = this;
+			_.each(res.data.contractors, (c)=>{
+				self.contractors[c.id] = c;
+				self.contractorOptions.push({label: c.contractor, value: c.id});
+			})
+		})
+	}
 
 }
 </script>
