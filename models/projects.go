@@ -22,7 +22,26 @@ type ProjectCollection struct {
 
 func GetProjects(db *sql.DB) ProjectCollection {
 
-    sql := "SELECT * FROM projects"
+    sql := `SELECT projects.id,
+    primary_marker_id,
+    contractor_id,
+    pm_id, title,
+    start_date,
+    end_date,
+    CONCAT(B.first_name, B.last_name) as project_manager,
+    B.phone as project_manager_phone,
+    B.cell as project_manager_cell,
+    B.email as project_manager_email,
+    CONCAT(A.first_name, ' ', A.last_name) as contractor,
+    A.phone as contractor_phone,
+    A.cell as contractor_cell,
+    A.email as contractor_email
+    FROM projects 
+    LEFT JOIN contractors on contractors.user_id = contractor_id
+    LEFT JOIN project_managers on project_managers.user_id = pm_id
+    LEFT JOIN users A on contractors.user_id = A.id
+    LEFT JOIN users B on project_managers.user_id = B.id;`
+    
     rows, err := db.Query(sql)
     // Exit if the SQL doesn't work for some reason
     if err != nil {

@@ -2,7 +2,7 @@
 <q-list>
   <q-collapsible icon="explore" label="Project Info">
     <div>
-      <q-input v-model="project.title" float-label="Project Title"/>
+      <!-- <q-input v-model="project.title" float-label="Project Title"/> -->
     </div>
   </q-collapsible>
   <q-collapsible icon="fa-calendar" label="Project Dates">
@@ -10,14 +10,14 @@
       <q-datetime-range
         type="date"
         v-model="range"
-        :min="range.start || undefined"
-        :max="range.end || undefined"
+        <!-- :min="range.start || undefined"
+        :max="range.end || undefined" -->
         />
     </div>
   </q-collapsible>
     <q-collapsible icon="fa-twitter" label="Project Manager">
     <div>
-      Content
+        <q-input v-model="project.project_manager"
     </div>
   </q-collapsible>
     <q-collapsible icon="fa-github" label="Contractor">
@@ -49,12 +49,13 @@ export default {
 
     },
     computed: {
-        range() {
-            return {
-                from: project.start_date.String,
-                to: project.end_date.String
-            }
-        }
+      //TODO
+        // range() {
+        //     return {
+        //         from: this.props.project.start_date.String,
+        //         to: 0
+        //     }
+        // }
     }
 
 }
