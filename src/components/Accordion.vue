@@ -7,12 +7,13 @@
   </q-collapsible>
   <q-collapsible icon="fa-calendar" label="Project Dates">
     <div>
-      <!-- <q-datetime-range
+      <q-datetime-range
+	  	@change="changeDateRange"
         type="date"
         v-model="range"
-    	:min="range.start || undefined"
-        :max="range.end || undefined"
-        /> -->
+		format="MM/DD/YYYY"
+		float-label="Start Date"
+        />
     </div>
   </q-collapsible>
     <q-collapsible icon="fa-twitter" label="Project Manager">
@@ -85,13 +86,13 @@ export default {
 
     },
     computed: {
-      //TODO
-        // range() {
-        //     return {
-        //         from: this.props.project.start_date.String,
-        //         to: 0
-        //     }
-        // }
+      // TODO
+        range() {
+            return {
+                from: this.project.start_date.String,
+                to: this.project.end_date.String
+            }
+        }
     },
 	methods: {
 		changePM(id){
@@ -108,6 +109,17 @@ export default {
 			this.project.contractor_phone = this.contractors[id].contractor_phone
 			this.project.contractor_email = this.contractors[id].contractor_email
 			this.project.color = this.contractors[id].color
+		},
+		changeDateRange(event){
+			if(event.from){
+				this.project.start_date.String = event.from.split('.')[0].split('T').join(' ')
+			}
+			if(event.to){
+				this.project.end_date.String = event.to.split('.')[0].split('T').join(' ')
+			}
+		},
+		confirmDeleteMarker(marker){
+
 		}
 	},
 	mounted(){
@@ -129,6 +141,8 @@ export default {
 				self.contractorOptions.push({label: c.contractor, value: c.id});
 			})
 		})
+
+		$('.q-datetime-range-right')[0].children[0].children[0].innerHTML = 'End Date'
 	}
 
 }
@@ -146,5 +160,9 @@ String.prototype.capitalize = function(){
 
 .fa-twitter:before {
     content: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20xmlns%3Axlink%3D%22http%3A//www.w3.org/1999/xlink%22%20version%3D%221.1%22%20id%3D%22Capa_1%22%20x%3D%220px%22%20y%3D%220px%22%20viewBox%3D%220%200%20512%20512%22%20style%3D%22enable-background%3Anew%200%200%20512%20512%3B%22%20xml%3Aspace%3D%22preserve%22%20width%3D%2230px%22%20height%3D%2230px%22%20class%3D%22%22%3E%3Cg%3E%3Cg%3E%0A%09%3Cg%3E%0A%09%09%3Cpath%20d%3D%22M511.68%2C498.731l-16.576-66.283c-3.797-15.125-13.952-27.819-27.904-34.773l-110.443-55.211%20%20%20%20c-2.603-1.301-5.675-1.472-8.448-0.469c-2.773%2C1.003-4.971%2C3.115-6.144%2C5.824l-54.933%2C128.192l-8.085-16.149%20%20%20%20c7.147-9.792%2C19.52-28.971%2C19.52-43.861c0-19.733-16.363-32-42.667-32s-42.667%2C12.267-42.667%2C32%20%20%20%20c0%2C14.891%2C12.373%2C34.069%2C19.499%2C43.84l-8.085%2C16.149l-54.933-128.192c-1.173-2.709-3.371-4.821-6.144-5.824%20%20%20%20c-2.773-0.981-5.803-0.832-8.448%2C0.469L44.8%2C397.675c-13.931%2C6.976-24.107%2C19.648-27.904%2C34.773L0.32%2C498.731%20%20%20%20c-0.789%2C3.179-0.085%2C6.571%2C1.941%2C9.152c2.005%2C2.603%2C5.12%2C4.117%2C8.405%2C4.117h490.667c3.285%2C0%2C6.4-1.515%2C8.427-4.096%20%20%20%20C511.765%2C505.323%2C512.469%2C501.931%2C511.68%2C498.731z%22%20data-original%3D%22%23000000%22%20class%3D%22%22%20fill%3D%22%23a9a9a9%22/%3E%0A%09%3C/g%3E%0A%3C/g%3E%3Cg%3E%0A%09%3Cg%3E%0A%09%09%3Cpath%20d%3D%22M401.173%2C175.637c-1.856-5.589-7.893-8.619-13.483-6.741c-5.589%2C1.856-8.597%2C7.893-6.741%2C13.483%20%20%20%20c2.005%2C5.973%2C3.051%2C12.992%2C3.051%2C20.288c0%2C20.629-7.68%2C31.979-11.349%2C31.509c-2.88-1.792-6.485-2.112-9.643-0.832%20%20%20%20s-5.504%2C4.011-6.336%2C7.317C341.738%2C300.885%2C301.29%2C341.333%2C256%2C341.333s-85.739-40.448-100.672-100.672%20%20%20%20c-0.832-3.307-3.52-5.781-6.677-7.061c-3.179-1.301-7.083-0.725-9.984%2C1.067c-2.667%2C0-10.667-11.349-10.667-32%20%20%20%20c0-7.296%2C1.045-14.315%2C3.051-20.288c1.856-5.568-1.152-11.627-6.763-13.483c-5.589-1.877-11.627%2C1.152-13.483%2C6.741%20%20%20%20c-2.709%2C8.107-4.139%2C17.451-4.139%2C27.029c0%2C29.717%2C13.141%2C52.288%2C30.741%2C53.312C156.778%2C320.213%2C203.456%2C362.667%2C256%2C362.667%20%20%20%20s99.221-42.453%2C118.592-106.688c17.6-1.024%2C30.741-23.595%2C30.741-53.312C405.333%2C193.088%2C403.904%2C183.744%2C401.173%2C175.637z%22%20data-original%3D%22%23000000%22%20class%3D%22%22%20fill%3D%22%23a9a9a9%22/%3E%0A%09%3C/g%3E%0A%3C/g%3E%3Cg%3E%0A%09%3Cg%3E%0A%09%09%3Cpath%20d%3D%22M256%2C0c-82.347%2C0-149.333%2C66.987-149.333%2C149.333c0%2C9.899%2C1.216%2C20.053%2C3.84%2C31.979c1.067%2C4.885%2C5.397%2C8.384%2C10.411%2C8.384%20%20%20%20c12.075%2C0%2C26.667%2C2.176%2C26.816%2C2.197c0.619%2C0.085%2C1.152%2C0.128%2C1.813%2C0.107c5.824%2C0.085%2C10.88-4.693%2C10.88-10.667%20%20%20%20c0-1.301-0.235-2.517-0.64-3.669c-1.301-21.291%2C0.043-42.816%2C3.008-49.664h1.621c36.885%2C0%2C55.275-11.712%2C63.765-26.496%20%20%20%20c22.997%2C22.699%2C69.248%2C44.587%2C113.963%2C47.488c2.539%2C17.92%2C10.389%2C35.755%2C10.795%2C36.651c1.707%2C3.904%2C5.547%2C6.357%2C9.728%2C6.357%20%20%20%20c0.277%2C0%2C0.576%2C0%2C0.875-0.021l28.416-2.325c4.672-0.384%2C8.533-3.776%2C9.557-8.341c2.603-11.925%2C3.819-22.08%2C3.819-31.979%20%20%20%20C405.333%2C66.987%2C338.346%2C0%2C256%2C0z%22%20data-original%3D%22%23000000%22%20class%3D%22%22%20fill%3D%22%23a9a9a9%22/%3E%0A%09%3C/g%3E%0A%3C/g%3E%3Cg%3E%0A%09%3Cg%3E%0A%09%09%3Cpath%20d%3D%22M224%2C192h-21.333c-5.888%2C0-10.667%2C4.779-10.667%2C10.667s4.779%2C10.667%2C10.667%2C10.667H224%20%20%20%20c5.888%2C0%2C10.667-4.779%2C10.667-10.667S229.888%2C192%2C224%2C192z%22%20data-original%3D%22%23000000%22%20class%3D%22%22%20fill%3D%22%23a9a9a9%22/%3E%0A%09%3C/g%3E%0A%3C/g%3E%3Cg%3E%0A%09%3Cg%3E%0A%09%09%3Cpath%20d%3D%22M309.333%2C192H288c-5.888%2C0-10.667%2C4.779-10.667%2C10.667s4.779%2C10.667%2C10.667%2C10.667h21.333%20%20%20%20c5.888%2C0%2C10.667-4.779%2C10.667-10.667S315.221%2C192%2C309.333%2C192z%22%20data-original%3D%22%23000000%22%20class%3D%22%22%20fill%3D%22%23a9a9a9%22/%3E%0A%09%3C/g%3E%0A%3C/g%3E%3C/g%3E%20%3C/svg%3E%20')!important;
+}
+
+.q-chip {
+	margin: 1px;
 }
 </style>

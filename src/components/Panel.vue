@@ -44,7 +44,6 @@ export default {
             var self = this;
             if(!_.isEmpty(this.projects)
             && !_.isEmpty(this.markers)
-            && !_.isEmpty(this.marker_types)
             && !_.isEmpty(this.contractors)){
 
                 _.each(this.markers, (marker)=>{
@@ -118,6 +117,7 @@ export default {
             _.each(res.data.contractors, (contractor)=>{
                 this.contractors[contractor.id] = contractor;
             })
+            this.regenerateProjects()
         })
 
         window.panel = this;
@@ -176,5 +176,6 @@ ul {
     padding-left: 10px;
     margin-top: 5px;
 }
+
 
 </style>
