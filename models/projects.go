@@ -17,7 +17,7 @@ type Project struct {
 
 type GetProject struct {
 	ID                    int            `json:"id"`
-	Primary_marker_id     int            `json:"primary_marker_id`
+	Primary_marker_id     int            `json:"primary_marker_id"`
 	Contractor_id         int            `json:"contractor_id"`
 	Pm_id                 int            `json:"pm_id"`
 	Title                 string         `json:"title"`

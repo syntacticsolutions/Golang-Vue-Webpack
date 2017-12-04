@@ -47,9 +47,12 @@ export default {
                         '{{}}',
                         self.projects[marker.project_id].color
                     )
-                    self.$emit('makeMarker', marker);
                     self.projects[marker.project_id].markers[marker.id] = marker;
                     self.$forceUpdate()
+                })
+
+                _.each(this.projects, (project)=>{
+                    this.$emit('makeMarker', this.markers[project.primary_marker_id]);
                 })
             }
         },
@@ -87,14 +90,6 @@ export default {
             this.regenerateProjects()
         })
 
-        axios.get(config.host + '/api/marker_types')
-        .then(res => {
-            this.marker_types = {}
-            _.each(res.data.marker_types, (marker_type)=>{
-                this.marker_types[marker_type.id] = marker_type;
-            })
-            this.regenerateProjects()
-        })
 
         axios.get(config.host + '/api/contractors')
         .then(res => {
@@ -103,6 +98,14 @@ export default {
                 this.contractors[contractor.id] = contractor;
             })
             this.regenerateProjects()
+        })
+
+        axios.get(config.host + '/api/marker_types')
+        .then(res => {
+            this.marker_types = {}
+            _.each(res.data.marker_types, (marker_type)=>{
+                this.marker_types[marker_type.id] = marker_type;
+            })
         })
 
         window.panel = this;
