@@ -62,10 +62,94 @@ func GetMarkers(db *sql.DB) MarkerCollection {
 	return result
 }
 
+func GetPrimaryMarkers(db *sql.DB) MarkerCollection {
+
+	sql := `
+		SELECT markers.id, type_id, project_id, lat, lng, markers.start_date, markers.end_date, info,
+		marker_type, svg
+		FROM markers
+		LEFT JOIN marker_types ON markers.type_id = marker_types.id
+		LEFT JOIN projects ON projects.primary_marker_id = markers.id
+		where projects.primary_marker_id = markers.id;
+		`
+	rows, err := db.Query(sql)
+	// Exit if the SQL doesn't work for some reason
+	if err != nil {
+		panic(err)
+	}
+	// make sure to cleanup when the program exits
+	defer rows.Close()
+
+	result := MarkerCollection{}
+
+	for rows.Next() {
+		marker := Marker{}
+		err2 := rows.Scan(
+			&marker.ID,
+			&marker.Type_id,
+			&marker.Project_id,
+			&marker.Lat,
+			&marker.Lng,
+			&marker.Start_date,
+			&marker.End_date,
+			&marker.Info,
+			&marker.Type,
+			&marker.Svg)
+
+		if err2 != nil {
+			panic(err2)
+		}
+
+		result.Markers = append(result.Markers, marker)
+	}
+	return result
+}
+
+func GetChildMarkers(db *sql.DB, ProjectID int) MarkerCollection {
+
+	sql := `
+		SELECT markers.id, type_id, project_id, lat, lng, markers.start_date, markers.end_date, info,
+		marker_type, svg
+		FROM markers
+		LEFT JOIN marker_types ON markers.type_id = marker_types.id
+		WHERE markers.id NOT IN (SELECT DISTINCT primary_marker_id FROM projects)
+		AND markers.project_id = ?
+			`
+	rows, err := db.Query(sql, ProjectID)
+	// Exit if the SQL doesn't work for some reason
+	checkErr(err)
+	// make sure to cleanup when the program exits
+	defer rows.Close()
+
+	result := MarkerCollection{}
+
+	for rows.Next() {
+		marker := Marker{}
+		err2 := rows.Scan(
+			&marker.ID,
+			&marker.Type_id,
+			&marker.Project_id,
+			&marker.Lat,
+			&marker.Lng,
+			&marker.Start_date,
+			&marker.End_date,
+			&marker.Info,
+			&marker.Type,
+			&marker.Svg)
+
+		if err2 != nil {
+			panic(err2)
+		}
+
+		result.Markers = append(result.Markers, marker)
+	}
+	return result
+}
+
 func PostMarker(db *sql.DB, marker Marker) (int64, error) {
 	sql := `
-    INSERT INTO markers(type_id, project_id, lat, lng, start_date, end_date, info) 
-    VALUES(?, ?, ?, ?, ?, ?)
+		INSERT INTO markers(type_id, project_id, lat, lng, start_date, end_date, info) 
+		VALUES(?, ?, ?, ?, ?, ?)
     `
 	// Create a prepared SQL statement
 	stmt, err := db.Prepare(sql)

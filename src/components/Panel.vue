@@ -35,6 +35,22 @@ export default {
             project: 0,
         }
     },
+    watch: {
+        project(val, oldVal){
+            if(oldVal === 0 && val !== 0){
+                //show project markers
+                if(project.gotMarkers === false){
+                    //if there are no markers yet, get child markers
+                    axios.get('/api/child_markers/' + val.id)
+                    .then(res => {
+                        _.each(res.data.markers, (marker)=>{
+                            this.assignMarkerToProject(marker, val.id)
+                        })
+                    })
+                }
+            }
+        }
+    },
     methods: {
         regenerateProjects(){
             var self = this;
@@ -42,19 +58,20 @@ export default {
             && !_.isEmpty(this.markers)
             && !_.isEmpty(this.contractors)){
 
-                _.each(this.markers, function(marker, id){
-                    marker.svg = marker.svg.replaceAll(
-                        '{{}}',
-                        self.projects[marker.project_id].color
-                    )
-                    self.projects[marker.project_id].markers[marker.id] = marker;
-                    self.$forceUpdate()
-                })
-
-                _.each(this.projects, (project)=>{
-                    this.$emit('makeMarker', this.markers[project.primary_marker_id]);
+                _.each(this.projects, (project, pID)=>{
+                    project['gotMarkers'] = false;
+                    this.assignMarkerToProject(this.markers[project.primary_marker_id], pID)
                 })
             }
+        },
+        assignMarkerToProject(marker, pID){
+            let newMarker = _.extend(marker, 
+                {
+                    svg: marker.svg.replaceAll('{{}}', this.projects[pID].color)
+                }
+            )
+            this.projects[pID].markers[marker.id] = marker
+            this.$emit('makeMarker', newMarker);
         },
         showDates(start, end){
             let first = start ? this.userFormatDate(start) : 'unknown'
